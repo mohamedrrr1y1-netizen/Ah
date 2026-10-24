@@ -1,1 +1,38 @@
 
+name: Build HAMO ULTIMATE APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/build.yml"
+      - "AndroidManifest.xml"
+      - "MainActivity.kt"
+      - "build.gradle.kts"
+      - "settings.gradle.kts"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download project
+        uses: actions/checkout@v4
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: HAMO-ULTIMATE-debug-apk
+          path: "**/build/outputs/apk/debug/*.apk"
+          if-no-files-found: error
